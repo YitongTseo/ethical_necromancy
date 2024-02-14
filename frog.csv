@@ -1,0 +1,13 @@
+,filename,reduced_filename,pixel_mean,pixel_min,pixel_max
+0,frog_acetone_3_R3D_w435.tif,frog/frog_acetone_reduced.jpg,11230.96039744329,444,22779
+1,frog_acetone_3_R3D_w-50.tif,frog/frog_acetone_reduced.jpg,2800.8169418012303,468,15733
+2,frog_acetone_3_R3D_w525.tif,frog/frog_acetone_reduced.jpg,15291.206952374087,2061,25534
+3,frog_ethanol_4_R3D_w435.tif,frog/frog_ethanol_reduced.jpg,10207.003272539408,853,17083
+4,frog_ethanol_4_R3D_w-50.tif,frog/frog_ethanol_reduced.jpg,3722.16927431757,347,19710
+5,frog_ethanol_4_R3D_w525.tif,frog/frog_ethanol_reduced.jpg,3356.865084582853,772,6741
+6,frog_meth_1_R3D_w435.tif,frog/frog_methanol_reduced.jpg,10378.965842464437,259,29881
+7,frog_meth_1_R3D_w-50.tif,frog/frog_methanol_reduced.jpg,2054.198532535563,626,9273
+8,frog_meth_1_R3D_w525.tif,frog/frog_methanol_reduced.jpg,4096.703165128796,962,7253
+9,frog_met_acetone_1_R3D_w435.tif,frog/frog_methanol & acetone_reduced.jpg,8847.992417820069,147,22346
+10,frog_met_acetone_1_R3D_w-50.tif,frog/frog_methanol & acetone_reduced.jpg,2332.615920319108,515,12655
+11,frog_met_acetone_1_R3D_w525.tif,frog/frog_methanol & acetone_reduced.jpg,3803.432500480584,352,8521

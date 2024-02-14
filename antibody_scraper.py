@@ -161,6 +161,7 @@ def check_alignment(
 #     second_destination_df.iloc[row_idx] = row
 #     second_destination_df.to_csv(second_destination_file, index=False)
 
+import matplotlib.pyplot as plt
 
 second_destination_file = "comparison_sabdab_summary_all.csv"
 second_destination_df = pd.read_csv(second_destination_file)
@@ -173,5 +174,7 @@ def try_json_loading(json_str):
 
 scores = [(idx, try_json_loading(x)) for idx, x in enumerate(second_destination_df['scores'].to_list()) if try_json_loading(x) is not None]
 scores_sorted = sorted([(idx, np.mean(score_list)) for idx, score_list in scores], key=lambda x: x[1], reverse=True)
+
+[x[1] for x in scores_sorted]
 pdb.set_trace()
 pass

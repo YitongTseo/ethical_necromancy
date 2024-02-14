@@ -1,0 +1,13 @@
+,filename,reduced_filename,pixel_mean,pixel_min,pixel_max
+0,chicken_ethanol_1_R3D_w435.tif,chicken/chicken_ethanol_reduced.jpg,3955.522251778162,104,13173
+1,chicken_ethanol_1_R3D_w-50.tif,chicken/chicken_ethanol_reduced.jpg,25644.930092272203,1706,65535
+2,chicken_ethanol_1_R3D_w525.tif,chicken/chicken_ethanol_reduced.jpg,776.2717512495194,205,3234
+3,chicken_meth_7_P1_R3D_w435.tif,chicken/chicken_methanol_reduced.jpg,285.1067644655902,141,535
+4,chicken_meth_7_P1_R3D_w-50.tif,chicken/chicken_methanol_reduced.jpg,299.84091407151095,168,526
+5,chicken_meth_7_P1_R3D_w525.tif,chicken/chicken_methanol_reduced.jpg,1287.535289071511,858,4136
+6,chicken_meth_ace_2_R3D_w435.tif,chicken/chicken_methanol & acetone_reduced.jpg,7021.280502931565,326,18642
+7,chicken_meth_ace_2_R3D_w-50.tif,chicken/chicken_methanol & acetone_reduced.jpg,6564.930916474433,737,65535
+8,chicken_meth_ace_2_R3D_w525.tif,chicken/chicken_methanol & acetone_reduced.jpg,1817.5616779604,446,5078
+9,chicken_meth_acetone_4_P1_R3D_w435.tif,chicken/chicken_acetone_reduced.jpg,823.3502542291426,434,1120
+10,chicken_meth_acetone_4_P1_R3D_w-50.tif,chicken/chicken_acetone_reduced.jpg,977.1952760957324,304,1546
+11,chicken_meth_acetone_4_P1_R3D_w525.tif,chicken/chicken_acetone_reduced.jpg,3907.335965013456,2219,6548
