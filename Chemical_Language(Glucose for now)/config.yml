@@ -1,0 +1,11 @@
+expansion:
+  uspto:
+    - /Users/yitongtseo/Documents/GitHub/ethical_necromancy/Chemical_Language(Glucose for now)/uspto_model.onnx
+    - /Users/yitongtseo/Documents/GitHub/ethical_necromancy/Chemical_Language(Glucose for now)/uspto_templates.csv.gz
+  ringbreaker:
+    - /Users/yitongtseo/Documents/GitHub/ethical_necromancy/Chemical_Language(Glucose for now)/uspto_ringbreaker_model.onnx
+    - /Users/yitongtseo/Documents/GitHub/ethical_necromancy/Chemical_Language(Glucose for now)/uspto_ringbreaker_templates.csv.gz     
+filter:
+  uspto: /Users/yitongtseo/Documents/GitHub/ethical_necromancy/Chemical_Language(Glucose for now)/uspto_filter_model.onnx
+stock:
+  zinc: /Users/yitongtseo/Documents/GitHub/ethical_necromancy/Chemical_Language(Glucose for now)/zinc_stock.hdf5

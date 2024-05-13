@@ -333,7 +333,6 @@ REMARK 620 (M=MODEL NUMBER; RES=RESIDUE NAME; C=CHAIN IDENTIFIER;
 REMARK 620 SSEQ=SEQUENCE NUMBER; I=INSERTION CODE):                             
 REMARK 620                                                                      
 REMARK 620 COORDINATION ANGLES FOR:  M RES CSSEQI METAL                         
-REMARK 620                              HG A   2  HG                            
 REMARK 620 N RES CSSEQI ATOM                                                    
 REMARK 620 1 ALA A 901   O                                                      
 REMARK 620 2 CYS A 905   SG   87.4                                              
@@ -344,7 +343,6 @@ REMARK 620 6 CYS B 905   N   157.8 105.5 142.8  51.1  74.4
 REMARK 620 N                    1     2     3     4     5                       
 REMARK 620                                                                      
 REMARK 620 COORDINATION ANGLES FOR:  M RES CSSEQI METAL                         
-REMARK 620                              HG B   1  HG                            
 REMARK 620 N RES CSSEQI ATOM                                                    
 REMARK 620 1 CYS A 947   SG                                                     
 REMARK 620 2 CYS A 947   N    69.2                                              
@@ -356,11 +354,9 @@ REMARK 800
 REMARK 800 SITE                                                                 
 REMARK 800 SITE_IDENTIFIER: AC1                                                 
 REMARK 800 EVIDENCE_CODE: SOFTWARE                                              
-REMARK 800 SITE_DESCRIPTION: BINDING SITE FOR RESIDUE HG B 1                    
 REMARK 800                                                                      
 REMARK 800 SITE_IDENTIFIER: AC2                                                 
 REMARK 800 EVIDENCE_CODE: SOFTWARE                                              
-REMARK 800 SITE_DESCRIPTION: BINDING SITE FOR RESIDUE HG A 2                    
 REMARK 900                                                                      
 REMARK 900 RELATED ENTRIES                                                      
 REMARK 900 RELATED ID: 1NKN   RELATED DB: PDB                                   
@@ -394,23 +390,8 @@ SEQRES   7 B  129  ILE GLN LEU GLU ALA LYS VAL LYS GLU MET ASN GLU ARG
 SEQRES   8 B  129  LEU GLU ASP GLU GLU GLU MET ASN ALA GLU LEU THR ALA          
 SEQRES   9 B  129  LYS LYS ARG LYS LEU GLU ASP GLU CYS SER GLU LEU LYS          
 SEQRES  10 B  129  ARG ASP ILE ASP ASP LEU GLU LEU THR LEU ALA LYS              
-HET     HG  A   2       1                                                       
-HET     HG  B   1       1                                                       
-HETNAM      HG MERCURY (II) ION                                                 
-FORMUL   3   HG    2(HG 2+)                                                     
 HELIX    1   1 LEU A  839  LYS A  963  1                                 125    
 HELIX    2   2 SER B  851  LEU B  961  1                                 111    
-LINK        HG    HG A   2                 O   ALA A 901     1555   1555  3.17  
-LINK        HG    HG A   2                 SG  CYS A 905     1555   1555  2.30  
-LINK        HG    HG A   2                 N   CYS A 905     1555   1555  3.42  
-LINK        HG    HG A   2                 O   ALA B 901     1555   1555  3.49  
-LINK        HG    HG A   2                 SG  CYS B 905     1555   1555  2.29  
-LINK        HG    HG A   2                 N   CYS B 905     1555   1555  3.41  
-LINK         SG  CYS A 947                HG    HG B   1     1555   1555  2.32  
-LINK         N   CYS A 947                HG    HG B   1     1555   1555  3.54  
-LINK        HG    HG B   1                 O   LEU B 943     1555   1555  3.49  
-LINK        HG    HG B   1                 SG  CYS B 947     1555   1555  2.29  
-LINK        HG    HG B   1                 N   CYS B 947     1555   1555  3.32  
 SITE     1 AC1  4 LEU A 943  CYS A 947  LEU B 943  CYS B 947                    
 SITE     1 AC2  4 ALA A 901  CYS A 905  ALA B 901  CYS B 905                    
 CRYST1   40.290   45.970  373.700  90.00  90.00  90.00 C 2 2 21     16          
@@ -2375,8 +2356,6 @@ ATOM   1952  CG  LEU B 961      31.303   4.104 207.654  1.00111.16           C
 ATOM   1953  CD1 LEU B 961      31.730   3.736 206.248  1.00112.78           C  
 ATOM   1954  CD2 LEU B 961      29.892   3.585 207.902  1.00 93.57           C  
 TER    1955      LEU B 961                                                      
-HETATM 1956 HG    HG A   2      29.441  21.672 126.053  0.30 87.76          HG  
-HETATM 1957 HG    HG B   1      29.707  11.054 187.579  0.30 97.98          HG  
 CONECT  519 1956                                                                
 CONECT  550 1956                                                                
 CONECT  555 1956                                                                

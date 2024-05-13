@@ -10,6 +10,8 @@
 # which says to download this chromedriver:
 # https://storage.googleapis.com/chrome-for-testing-public/123.0.6312.0/mac-x64/chromedriver-mac-x64.zip
 
+# Here's where we cancel jobs...
+# https://wenmr.science.uu.nl/haddock2.4/workspace
 
 from selenium import webdriver
 from selenium.webdriver.common.by import By
@@ -40,6 +42,7 @@ def calculate_hotspot_idxs(
     chunk_num=3,
     # How many residues from the N & C terminus do we give as buffer
     end_buffer=10,
+    chain_B_increment=1000,
 ):
     if "rabbit_myosin" in pdb_name:
         protein_len = 100
@@ -64,11 +67,17 @@ def calculate_hotspot_idxs(
     hotspot_end_idx = min(
         ((hotspot_bucket + 1) * step_size) + first_residue_idx, final_residue_idx
     )
-    return ",".join([f"{idx}" for idx in range(hotspot_start_idx, hotspot_end_idx)])
+    chain_A_hotspots = range(hotspot_start_idx, hotspot_end_idx)
+    chain_B_hotspots = range(
+        hotspot_start_idx + chain_B_increment, hotspot_end_idx + chain_B_increment
+    )
+    return ",".join(
+        [f"{idx}" for idx in chain_A_hotspots] + [f"{idx}" for idx in chain_B_hotspots]
+    )
 
 
 COILED_COIL_ACTIVE_RESIDUE_BUCKETS = {
-    "hotspot_0": 0,
+    # "hotspot_0": 0,
     "hotspot_1": 1,
     "hotspot_2": 2,
 }
@@ -76,13 +85,7 @@ COILED_COIL_ACTIVE_RESIDUE_BUCKETS = {
 FINISHED_RUNS = [
     "myosin_binder_2fxm_hotspot_0",
     "myosin_binder_2fxo_1_hotspot_0",
-    "myosin_binder_2fxo_2_hotspot_0",
     "myosin_binder_rabbit_0to100_hotspot_0",
-    "myosin_binder_rabbit_50to150_hotspot_0",
-    "myosin_binder_rabbit_100to200_hotspot_0",
-    "myosin_binder_rabbit_150to250_hotspot_0",
-    "myosin_binder_rabbit_200to300_hotspot_0",
-    "myosin_binder_rabbit_250to350_hotspot_0",
 ]
 
 wait_time = 1
@@ -110,7 +113,7 @@ files = [
     f"{ROOT}/canonicalized/relaxedrabbit_myosin_850to950",
     f"{ROOT}/canonicalized/relaxedrabbit_myosin_900to1000",
     f"{ROOT}/canonicalized/relaxedrabbit_myosin_950to1050",
-    f"{ROOT}/canonicalized/relaxedrabbit_myosin_1000to1077",
+    f"{ROOT}/canonicalized/relaxedrabbit_myosin_1Kto1077",
 ]
 user_email = input("What's your email yitong: ")
 user_password = getpass.getpass("What's your password: ")
@@ -119,7 +122,6 @@ chromedriver_path = "/Users/yitongtseo/Documents/GitHub/ethical_necromancy/nanob
 service = Service(executable_path=chromedriver_path)
 driver = webdriver.Chrome(service=service)
 first_run = True
-
 
 for target_hotspot, hotspot_idx in COILED_COIL_ACTIVE_RESIDUE_BUCKETS.items():
 
@@ -161,19 +163,19 @@ for target_hotspot, hotspot_idx in COILED_COIL_ACTIVE_RESIDUE_BUCKETS.items():
         job_name = f"myosin_binder_{target_pdb}_{target_hotspot}"
         driver.find_element(By.ID, "runname").send_keys(job_name)
 
-        # Set number of molecules to 3
+        # Set number of molecules to 2
         select_molecules = Select(driver.find_element(By.ID, "nb_partners"))
-        select_molecules.select_by_visible_text("3")
+        select_molecules.select_by_visible_text("2")
 
         # Upload PDB file - ensure the path to the file is correct
         driver.find_element(By.ID, "p1_pdb_file").send_keys(NANOBODY_PATH)
 
         driver.find_element(By.ID, "p2_pdb_file").send_keys(
-            f"{test_coiled_coil_path}_chainA.pdb"
+            f"{test_coiled_coil_path}.pdb"
         )
-        driver.find_element(By.ID, "p3_pdb_file").send_keys(
-            f"{test_coiled_coil_path}_chainB.pdb"
-        )
+        # driver.find_element(By.ID, "p3_pdb_file").send_keys(
+        #     f"{test_coiled_coil_path}_chainB.pdb"
+        # )
 
         if first_run:
             # Handle the cookie pop up
@@ -207,38 +209,38 @@ for target_hotspot, hotspot_idx in COILED_COIL_ACTIVE_RESIDUE_BUCKETS.items():
         input_field = driver.find_element(By.ID, "p2_r_activereslist_1")
         input_field.clear()  # Clear any existing content in the field
         input_field.send_keys(hotspots)
-        input_field = driver.find_element(By.ID, "p3_r_activereslist_1")
-        input_field.clear()  # Clear any existing content in the field
-        input_field.send_keys(hotspots)
-
+        # input_field = driver.find_element(By.ID, "p3_r_activereslist_1")
+        # input_field.clear()  # Clear any existing content in the field
+        # input_field.send_keys(hotspots)
         # Empty out all the residues we don't care about
-        wait = WebDriverWait(driver, 10)
-        remove_button = wait.until(
-            EC.element_to_be_clickable(
-                (By.XPATH, '//a[@onclick="hideSelection(1, 2);"]')
-            )
-        )
-        action = ActionChains(driver)
-        action.move_to_element(remove_button).perform()
-        remove_button.click()
-        wait = WebDriverWait(driver, 10)
-        remove_button = wait.until(
-            EC.element_to_be_clickable(
-                (By.XPATH, '//a[@onclick="hideSelection(2, 2);"]')
-            )
-        )
-        action = ActionChains(driver)
-        action.move_to_element(remove_button).perform()
-        remove_button.click()
-        wait = WebDriverWait(driver, 10)
-        remove_button = wait.until(
-            EC.element_to_be_clickable(
-                (By.XPATH, '//a[@onclick="hideSelection(3, 2);"]')
-            )
-        )
-        action = ActionChains(driver)
-        action.move_to_element(remove_button).perform()
-        remove_button.click()
+        # wait = WebDriverWait(driver, 10)
+        # remove_button = wait.until(
+        #     EC.element_to_be_clickable(
+        #         (By.XPATH, '//a[@onclick="hideSelection(1, 2);"]')
+        #     )
+        # )
+        # action = ActionChains(driver)
+        # action.move_to_element(remove_button).perform()
+        # remove_button.click()
+        # # wait = WebDriverWait(driver, 10)
+        # remove_button = wait.until(
+        #     EC.element_to_be_clickable(
+        #         (By.XPATH, '//a[@onclick="hideSelection(2, 2);"]')
+        #     )
+        # )
+        # action = ActionChains(driver)
+        # action.move_to_element(remove_button).perform()
+        # remove_button.click()
+
+        # wait = WebDriverWait(driver, 10)
+        # remove_button = wait.until(
+        #     EC.element_to_be_clickable(
+        #         (By.XPATH, '//a[@onclick="hideSelection(3, 2);"]')
+        #     )
+        # )
+        # action = ActionChains(driver)
+        # action.move_to_element(remove_button).perform()
+        # remove_button.click()
 
         # Get thru the next screen
         button = driver.find_element(By.ID, "submit")
