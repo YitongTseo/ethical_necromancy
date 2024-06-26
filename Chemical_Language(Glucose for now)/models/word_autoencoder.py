@@ -62,39 +62,6 @@ class PositionalEncoding(nn.Module):
         return x + self.pe[: x.size(0), :]
 
 
-# class WordDecoder(pl.LightningModule):
-#     def __init__(
-#         self, latent_dim, vocab_size, max_len=16, nhead=2, num_decoder_layers=2
-#     ):
-#         super(WordDecoder, self).__init__()
-#         self.max_len = max_len
-#         self.embedding = nn.Embedding(vocab_size, latent_dim)
-#         self.positional_encoding = PositionalEncoding(latent_dim, max_len)
-#         self.transformer_decoder = Transformer(
-#             d_model=latent_dim, nhead=nhead, num_decoder_layers=num_decoder_layers
-#         )
-#         self.fc_out = nn.Linear(latent_dim, vocab_size)
-
-#     def forward(self, latent_space, tgt, tgt_mask=None):
-#         latent_space_unsqueezed = latent_space.unsqueeze(0).repeat(self.max_len, 1, 1)
-#         # These positional embeddings feel a lil suspiciuos, but if we don't then the
-#         # latent space repeats are going to be the same in every position...
-#         latent_space_unsqueezed = self.positional_encoding(latent_space_unsqueezed)
-
-#         tgt_emb = self.embedding(tgt)
-#         tgt_emb = tgt_emb.squeeze().permute(
-#             1, 0, 2
-#         ) # Transformer expects [tgt_len, batch_size, latent_dim]
-#         tgt_emb = self.positional_encoding(tgt_emb)
-#         output = self.transformer_decoder(tgt_emb, latent_space_unsqueezed, tgt_mask)
-#         output = self.fc_out(output)
-#         pdb.set_trace()
-#         output = output.permute(
-#             1, 0, 2
-#         )  # Convert back to [batch_size, tgt_len, vocab_size]
-#         pdb.set_trace()
-#         return output
-
 
 class WordDecoder(pl.LightningModule):
     def __init__(self, latent_dim, vocab_size, max_len=16):
@@ -118,28 +85,56 @@ class WordDecoder(pl.LightningModule):
 
         # Decode the embeddings with GPT-2
         # TODO: we probably want to deal with the attention_mask eventually
-        outputs = self.gpt2(inputs_embeds=latent_space_unsqueezed)#, attention_mask=tgt_mask)
-        logits = outputs.logits.permute(1, 0, 2)  # Convert back to [batch_size, tgt_len, vocab_size]
+        outputs = self.gpt2(
+            inputs_embeds=latent_space_unsqueezed
+        )  # , attention_mask=tgt_mask)
+        logits = outputs.logits.permute(
+            1, 0, 2
+        )  # Convert back to [batch_size, tgt_len, vocab_size]
         return logits
 
-    # def forward(self, latent_space, tgt, tgt_mask=None):
-    #     # Repeat the latent space for each position in the sequence
-    #     latent_space_unsqueezed = latent_space.unsqueeze(0).repeat(self.max_len, 1, 1)
-    #     latent_space_unsqueezed = self.positional_encoding(latent_space_unsqueezed)
-    #     # latent_space_unsqueezed = latent_space_unsqueezed.permute(1, 0, 2)
-        
+    def decode(self, latent, tokenizer):
+        self.eval()  # Set the model to evaluation mode
+        with torch.no_grad():  # Disable gradient calculation
+            batch_size = latent.size(0)
+            device = latent.device
+            # Apply positional encoding to latent space
+            latent_space_unsqueezed = latent.unsqueeze(0).repeat(self.max_len, 1, 1)
+            latent_space_unsqueezed = self.positional_encoding(latent_space_unsqueezed)
 
-    #     tgt_emb = self.embedding(tgt)
-    #     tgt_emb = tgt_emb.squeeze().permute(
-    #         1, 0, 2
-    #     )  # Transformer expects [tgt_len, batch_size, latent_dim]
-    #     tgt_emb = self.positional_encoding(tgt_emb)
-    #     pdb.set_trace()
-    #     output = self.gpt2(
-    #         inputs_embeds=latent_space_unsqueezed, attention_mask=tgt_mask
-    #     )
-    #     output = self.fc_out(output.last_hidden_state)
-    #     output = output.permute(
-    #         1, 0, 2
-    #     )  # Convert back to [batch_size, tgt_len, vocab_size]
-    #     return output
+            # Initialize the input with the [CLS] token (assuming 101 is the ID for [CLS])
+            input_ids = torch.tensor(
+                [tokenizer.cls_token_id] * batch_size, device=device
+            ).unsqueeze(1)
+            finished_sequences = torch.zeros(
+                batch_size, dtype=torch.bool, device=device
+            )
+            for i in range(1, self.max_len):
+                # Get the latent vector for the current time step
+                current_latent = latent_space_unsqueezed[i : i + 1]
+
+                # Decode using GPT-2 with the positional encoded latent space
+                outputs = self.gpt2(
+                    inputs_embeds=current_latent,
+                    attention_mask=(~finished_sequences).unsqueeze(1),
+                )
+                next_token = outputs.logits.argmax(dim=-1).squeeze().reshape((-1, 1))
+                input_ids = torch.cat((input_ids, next_token), dim=1)
+
+                # Update finished_sequences
+                # The model is not perfect and sometimes outputs 0's instead of ending correctly
+                finished_sequences = (
+                    finished_sequences
+                    | ((next_token == tokenizer.sep_token_id)).squeeze()
+                    | ((next_token == 0)).squeeze()
+                )
+                # Break if all sequences are finished
+                if finished_sequences.all():
+                    break
+
+            word_reconstruction_decoded = input_ids.tolist()
+            decoded_sentences = [
+                tokenizer.decode(token_id, skip_special_tokens=True)
+                for token_id in word_reconstruction_decoded
+            ]
+            return decoded_sentences, word_reconstruction_decoded
