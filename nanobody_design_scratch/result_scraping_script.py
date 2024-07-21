@@ -1,3 +1,6 @@
+# conda activate ethical_necromancy
+# Check here for the URLs: https://wenmr.science.uu.nl/haddock2.4/workspace
+
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
@@ -12,7 +15,7 @@ import time
 import pandas as pd
 import pdb
 
-ROOT = "/Users/yitongtseo/Documents/GitHub/ethical_necromancy/nanobody_design_scratch/pdb_files/HADDOCK_results"
+ROOT = "/Users/yitongtseo/Documents/GitHub/ethical_necromancy/nanobody_design_scratch/pdb_files/HADDOCK_results_myosin_head"
 # Setup DataFrame
 columns = [
     "Target PDB",
@@ -39,7 +42,7 @@ service = Service(executable_path=chromedriver_path)
 driver = webdriver.Chrome(service=service)
 
 
-urls_df = pd.read_csv("HADDOCK_progress_urls.csv")
+urls_df = pd.read_csv("HADDOCK_progress_urls_myosinheads.csv")
 df = pd.DataFrame()
 # # URL of the page to scrape (you might need to adjust this)
 # url = 'http://example.com/page'
@@ -52,7 +55,7 @@ for idx, row in urls_df.iterrows():
     driver.get(url)
 
     # Wait for JavaScript to load
-    WebDriverWait(driver, 10).until(
+    WebDriverWait(driver, 20).until(
         EC.visibility_of_element_located((By.CLASS_NAME, "textblock"))
     )
 
@@ -117,7 +120,7 @@ for idx, row in urls_df.iterrows():
         )
         print("------\n")
 
-    results_df.to_csv("haddock_results.csv", index=False)
+    results_df.to_csv("myosin_head_haddock_results_myosin_heads.csv", index=False)
 
 # Close the browser
 driver.quit()

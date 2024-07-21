@@ -1,0 +1,17 @@
+RECIPE BOOK for pymol:
+
+### TO GET SURFACE ACCESSIBLE PROTEINS
+load /Users/yitongtseo/Documents/GitHub/ethical_necromancy/nanobody_design_scratch/myosin_2_pdb_files/6ysy_just_myosin.pdb, protein
+show surface, protein
+run /Users/yitongtseo/Documents/GitHub/ethical_necromancy/nanobody_design_scratch/myosin_2_pdb_files/find_surface_residues.py
+findSurfaceResidues doShow=1, cutoff=15
+save selected_residues.pdb, exposed_res_01
+
+### TO SELECT SOME PART OF A PDB
+select chain_A, chain A and resi 1-20000
+select interest, 6ysy_chunk1 and (resi 367-374 or resi 377-380 or resi 382-383 or resi 385-386 or resi 392-397 or resi 400-400 or resi 404-404 or resi 406-420 or resi 606-607 or resi 610-611 or resi 613-616 or resi 618-619 or resi 621-623 or resi 625-625)
+
+### WORKFLOW FOR CHUNKING PROTEIN
+*select chunk with mouse*
+save 6ysy_chunk1.pdb, sele
+remove 6ysy_just_myosin and sele
