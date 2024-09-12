@@ -141,8 +141,8 @@ def split_chain_B(input_file, output_path, cutoff=1000, decrement=-1000):
 from pathlib import Path
 import os
 
-OLD_FOLDER = 'HADDOCK_results'
-NEW_FOLDER = 'canonicalized_HADDOCK_results'
+OLD_FOLDER = 'HADDOCK_results_myosin_head'
+NEW_FOLDER = 'canonicalized_HADDOCK_results_myosin_head'
 directory = Path(os.path.join(ROOT, OLD_FOLDER))
 
 # Iterate through each item in the directory
