@@ -29,10 +29,12 @@ import getpass
 
 # from 3:21 -->
 
-directory = "/Users/yitongtseo/Documents/GitHub/ethical_necromancy/nanobody_llm_refinement/idx60_6bih"
+directory = "/Users/yitongtseo/Documents/GitHub/ethical_necromancy/nanobody_llm_refinement/idx206_8efd"
 NANOBODY_CDH_RESIDUES = "26,27,28,29,30,31,32,33,51,52,53,54,55,56,57,58,95,96,97,98,99,100,101,102,103,104,105,106,107,108,109,110,111,112,113,114,115,116,117,118,119,120"
 # IDX0_MYOSIN_HOTSPOTS = "859,860,861,862,863,864,865,866,949,950,951,1145,1146,1147,1148,1149,1150,1151,1191,1192,1193,1194,1195,1196,1197,1198,1199,1200,1201,1202,1203,1204,1205,1206,1207,1357,1358,1359,1360,1361,1362,1457,1458"
-IDX60_MYOSIN_HOTSPOTS = "1166,1167,1168,1196,1197,1198,1199,1200,1201,1202,1203,1204,1205,1206,1207,1208,1209,1210,1304,1305,1306,1307,1308,1309,1310,1311,1312,1313,1314,1315,1316,1317,1318,1319,1320,1321,1322,1323"
+# IDX60_MYOSIN_HOTSPOTS = "1166,1167,1168,1196,1197,1198,1199,1200,1201,1202,1203,1204,1205,1206,1207,1208,1209,1210,1304,1305,1306,1307,1308,1309,1310,1311,1312,1313,1314,1315,1316,1317,1318,1319,1320,1321,1322,1323"
+# IDX120_MYOSIN_HOTSPOTS = "804,805,806,807,808,823,824,825,826,827,828,829,830,831,832,833,834,835,836,876,877,878,879,880,881,882,883,884,885,886,887,888,889,890,891,892,893,894,1331,1332,1333,1334,1335,1336,1337,1338"
+IDX206_MYOSIN_HOTSPOTS = "1151,1152,1153,1154,1155,1156,1157,1158,1159,1160,1192,1193,1194,1195,1196,1197,1125,1126,1127,1128,1292,1293,1294,1295,1296,1297,1298,1299,1300,1301,1302,1303,1304,1305,1306,1307,1308,1309,1310"
 
 URLS_TO_CHECK_UP_ON = []
 
@@ -44,9 +46,26 @@ chromedriver_path = "/Users/yitongtseo/Documents/GitHub/ethical_necromancy/nanob
 service = Service(executable_path=chromedriver_path)
 driver = webdriver.Chrome(service=service)
 first_run = True
-# collected URL:  https://rascar.science.uu.nl/haddock2.4/run/6886575225/386483-MyoHead_60_L107T_S121E
-# collected URL:  https://rascar.science.uu.nl/haddock2.4/run/6886575225/386484-MyoHead_60_T116G_G99Q
-FINISHED_RUNS = ['L107T_S121E', 'T116G_G99Q']
+FINISHED_RUNS = [
+    "MyoHead_120_E117S_T98N",
+    "MyoHead_120_L107R_None",
+    "MyoHead_120_S101Q_N104Q",
+    "MyoHead_120_T98N_N104Q",
+    "MyoHead_120_E117S_S101Q",
+    "MyoHead_120_E117S_L107R",
+    "MyoHead_120_T98D_None",
+    "MyoHead_120_T98N_L107R",
+    "MyoHead_120_T98S_E117S",
+    "MyoHead_120_N104K_None",
+    "MyoHead_120_T98S_N104K",
+    "MyoHead_120_E117S_N104Q",
+    "MyoHead_120_None_None",
+    "MyoHead_120_S101Q_L107R",
+    "MyoHead_120_E117S_T98D",
+    "MyoHead_120_S101Q_None",
+    "MyoHead_120_N104Q_None",
+    "MyoHead_120_N104K_T98D",
+]
 wait_time = 10
 
 from pathlib import Path
@@ -145,7 +164,7 @@ for file in files:
     input_field.send_keys(NANOBODY_CDH_RESIDUES)
     input_field = driver.find_element(By.ID, "p2_r_activereslist_1")
     input_field.clear()  # Clear any existing content in the field
-    input_field.send_keys(IDX60_MYOSIN_HOTSPOTS)
+    input_field.send_keys(IDX206_MYOSIN_HOTSPOTS)
     # input_field = driver.find_element(By.ID, "p3_r_activereslist_1")
     # input_field.clear()  # Clear any existing content in the field
     # input_field.send_keys(hotspots)

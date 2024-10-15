@@ -1,0 +1,8 @@
+I'm submitting a job for control of the original nanobody and docking protein: https://www.rcsb.org/structure/3g9a
+
+3g9a_control_2
+target GFP residues: 146,147,148,149,150,151,152,153,154,162,163,164,165,166,167,168,196,197,198,199,226,227,228,229
+nanobody residues: 26,27,28,29,30,31,32,33,51,52,53,54,55,56,57,58,95,96,97,98,99,100,101,102,103,104,105,106,107,108,109,110,111,112,113,114,115,116,117,118,119,120
+
+select chain_A, chain A and res 1-20000
+color red, chain_A

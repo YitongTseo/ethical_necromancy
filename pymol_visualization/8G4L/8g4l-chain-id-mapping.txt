@@ -1,0 +1,142 @@
+    New chain ID            Original chain ID
+
+8g4l-pdb-bundle1.pdb:
+           A                        BB
+           B                        BA
+           C                        BE
+           D                        BF
+           E                        BG
+           F                        BH
+           G                        BI
+           H                        BJ
+           I                        BK
+           J                        BL
+           K                        BM
+           L                        BN
+           M                        BO
+           N                        BP
+
+8g4l-pdb-bundle2.pdb:
+           A                        BQ
+           B                        BR
+           C                        BS
+           D                        BT
+           E                        BU
+           F                        BV
+           G                        BW
+           H                        BX
+           I                        BY
+           J                        BZ
+           K                        ba
+           L                        bb
+           M                        bc
+           N                        bd
+           O                        be
+
+8g4l-pdb-bundle3.pdb:
+           A                        bf
+           B                        bg
+           C                        bh
+           D                        bi
+           E                        bj
+           F                        bk
+           G                        bl
+           H                        bm
+           I                        bn
+           J                        bo
+           K                        bq
+           L                        br
+           M                        AA
+
+8g4l-pdb-bundle4.pdb:
+           A                        AB
+           B                        AE
+           C                        AF
+           D                        AG
+           E                        AH
+           F                        AI
+           G                        AJ
+           H                        AK
+           I                        AL
+           J                        AM
+           K                        AN
+           L                        AO
+           M                        AP
+           N                        AQ
+           O                        AR
+           P                        AS
+
+8g4l-pdb-bundle5.pdb:
+           A                        AT
+           B                        AU
+           C                        AV
+           D                        AW
+           E                        AX
+           F                        AY
+           G                        AZ
+           H                        aa
+           I                        ab
+           J                        ac
+           K                        ad
+           L                        ae
+           M                        af
+           N                        ag
+
+8g4l-pdb-bundle6.pdb:
+           A                        ah
+           B                        ai
+           C                        aj
+           D                        ak
+           E                        al
+           F                        am
+           G                        an
+           H                        ao
+           I                        aq
+           J                        ar
+           K                         A
+           L                         B
+           M                         E
+
+8g4l-pdb-bundle7.pdb:
+           F                         F
+           G                         G
+           H                         H
+           I                         I
+           J                         J
+           K                         K
+           L                         L
+           M                         M
+           N                         N
+           O                         O
+           P                         P
+           Q                         Q
+           R                         R
+           S                         S
+           T                         T
+           U                         U
+           V                         V
+           W                         W
+
+8g4l-pdb-bundle8.pdb:
+           X                         X
+           Y                         Y
+           Z                         Z
+           a                         a
+           b                         b
+           c                         c
+           d                         d
+           e                         e
+           f                         f
+           g                         g
+           h                         h
+           i                         i
+           j                         j
+           k                         k
+           l                         l
+
+8g4l-pdb-bundle9.pdb:
+           m                         m
+           n                         n
+           o                         o
+           q                         q
+           r                         r
