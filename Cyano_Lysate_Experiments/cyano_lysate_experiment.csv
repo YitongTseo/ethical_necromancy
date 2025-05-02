@@ -1,0 +1,13 @@
+time,0,1,2,3,4
+No Na2HPO4 - No Cyano,0.0445,0.0465,0.0785,0.131,0.368
+No Na2HPO4 - Unfiltered Cyano,0.291,0.265,0.2555,0.2565,0.2905
+No Na2HPO4 - Filtered Cyano,0.045,0.045,0.044,0.044,0.0465
+No Peptone - No Cyano,0.0445,0.051,0.0755,0.7965,0.194
+No Peptone - Unfiltered Cyano,0.164,0.1675,0.174,0.1495,0.221
+No Peptone - Filtered Cyano,0.043,0.0445,0.0435,0.043,0.0425
+No Glucose - No Cyano,0.044,0.0465,0.0495,0.0545,0.068
+No Glucose - Unfiltered Cyano,0.3575,0.3215,0.318,0.32,0.381
+No Glucose - Filtered Cyano,0.0435,0.0435,0.0435,0.1625,0.216
+Reg HS Media - No Cyano,0.0435,0.0475,0.051,0.069,0.122
+Reg HS Media - Unfiltered Cyano,0.2175,0.4015,0.451,0.398,0.486
+Reg HS Media - Filtered Cyano,0.0495,0.053,0.112,0.1275,0.182
