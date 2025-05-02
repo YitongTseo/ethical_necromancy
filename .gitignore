@@ -1,0 +1,25 @@
+Chemical_Language(Glucose for now)/CID-SMILES.gz
+Chemical_Language(Glucose for now)/checkpoints/
+Chemical_Language(Glucose for now)/datasets/embedded_words.csv
+Chemical_Language(Glucose for now)/datasets/enamine_fingerprints.csv
+Chemical_Language(Glucose for now)/datasets/processed_playground_rhea.csv
+Chemical_Language(Glucose for now)/datasets/rhea-reaction-smiles.tsv
+Chemical_Language(Glucose for now)/datasets/rhea-relationships.tsv
+Chemical_Language(Glucose for now)/processed_data.pkl
+Chemical_Language(Glucose for now)/uspto_filter_model.onnx
+Chemical_Language(Glucose for now)/uspto_model.hdf5
+Chemical_Language(Glucose for now)/uspto_ringbreaker_model.hdf5
+Chemical_Language(Glucose for now)/uspto_ringbreaker_model.onnx
+Chemical_Language(Glucose for now)/uspto_ringbreaker_templates.csv.gz
+Realtime_Cell_Emotions/Fast-Facial-Emotion-Monitoring-FFEM-Package/
+Realtime_Cell_Emotions/FastSAM-s.pt
+Realtime_Cell_Emotions/FastSAM/
+nanobody_design_scratch/check_hydrogen_bonds/RFDiff Peptide Data v2-20240611T154928Z-001.zip
+nanobody_design_scratch/check_hydrogen_bonds/RFDiff Peptide Data v2-20240611T154928Z-002.zip
+nanobody_design_scratch/check_hydrogen_bonds/RFDiff Peptide Data v2-20240611T154928Z-003.zip
+nanobody_design_scratch/check_hydrogen_bonds/RFDiff Peptide Data v2-20240611T154928Z-004.zip
+nanobody_design_scratch/check_hydrogen_bonds/RFDiff Peptide Data v2-20240611T154928Z-005.zip
+nanobody_design_scratch/check_hydrogen_bonds/RFDiff Peptide Data v2-20240611T154928Z-006.zip
+pymol_visualization/combined_8G4L.pse
+pymol_visualization/combined_8G4L_200Angstrom_balls.pse
+pymol_visualization/combined_8G4L_naked.pse
