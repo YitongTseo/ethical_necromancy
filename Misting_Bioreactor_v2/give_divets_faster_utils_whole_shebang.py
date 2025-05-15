@@ -4,13 +4,14 @@ import numpy as np
 import pickle
 import os
 from tqdm import tqdm
+import random
 
 # Note: Make sure the 'rtree' package is installed for trimesh's ray casting to work:
 # pip install rtree
 
 # Parameters
 COEFFICIENT = 1.0
-SPACING = 1.2 * 4 * COEFFICIENT
+SPACING = 3 * 4 * COEFFICIENT
 cone_radius = 4 * COEFFICIENT
 cone_depth = 4.0 * COEFFICIENT
 
@@ -50,7 +51,7 @@ def build_divot_geometry():
 
     return cone.union(top_cylinder).union(connecting_cylinder).union(sphere)
 
-def create_translated_divot(x, y, mesh):
+def create_translated_divot(x, y, mesh, num_rays=1, dither_amount=0.00, min_z_threshold=0.1):
     ray_origins = np.array([[x, y, 100]])
     ray_directions = np.array([[0, 0, -1]])
     
@@ -69,19 +70,39 @@ def create_translated_divot(x, y, mesh):
     debug = (int(x * 10) % 40 == 0 and int(y * 10) % 40 == 0)
     if debug:
         print(f"Testing divot at ({x:.2f}, {y:.2f})")
+        
+    ray_origins = []
+    ray_directions = []
+
+    for _ in range(num_rays):
+        # Generate slightly dithered ray origins
+        origin_x = x + random.uniform(-dither_amount, dither_amount)
+        origin_y = y + random.uniform(-dither_amount, dither_amount)
+        ray_origins.append([origin_x, origin_y, 200])  # Still casting downwards from a high Z
+
+        ray_directions.append([0, 0, -1])
+    ray_origins = np.array(ray_origins)
+    ray_directions = np.array(ray_directions)
+
 
     locations, _, _ = mesh.ray.intersects_location(ray_origins, ray_directions)
+
     if len(locations) == 0:
-        if debug:
-            print(f"No intersection found at ({x:.2f}, {y:.2f})")
         return None
 
-    z_top = locations[0][2]
-    if debug:
-        print(f"Found intersection at ({x:.2f}, {y:.2f}, {z_top:.2f})")
+    # Find the highest Z-top location
+    highest_z = -float('inf')
+    valid_intersections = False
+    for loc in locations:
+        if loc[2] > min_z_threshold:  # Only consider intersections above a certain Z
+            highest_z = max(highest_z, loc[2])
+            valid_intersections = True
+
+    if not valid_intersections:
+        return None
 
     divot = build_divot_geometry()
-    return divot.translate((x, y, z_top))
+    return divot.translate((x, y, highest_z))
     # except Exception as e:
     #     print(f"Failed divot at ({x:.2f}, {y:.2f}): {e}")
     #     return None
@@ -137,20 +158,7 @@ if __name__ == "__main__":
     mesh_bytes = pickle.dumps(mesh)
 
     # Use fewer divots initially to test the process
-    step_size = int(SPACING)
-
-    # Get more precise bounds
-    precise_xmin, precise_ymin = float(xmin), float(ymin)
-    precise_xmax, precise_ymax = float(xmax), float(ymax)
-
-    # Create a more dense grid of points
-    x_range = np.linspace(precise_xmin, precise_xmax, num=10)
-    y_range = np.linspace(precise_ymin, precise_ymax, num=10)
-
-    print("precise_xmin, precise_ymin, precise_xmax, precise_ymax")
-    print(precise_xmin, precise_ymin, precise_xmax, precise_ymax)
-
-    print(f"Creating {len(x_range) * len(y_range)} potential divots...")
+    # step_size = int(SPACING)
 
     # Let's first visualize where the model actually is
     # test_points = []
@@ -202,17 +210,32 @@ if __name__ == "__main__":
             continue
 
     # # Save the divots for inspection
-    # try:
-    #     cq.exporters.export(divots, "all_divots.step")
-    #     print("Exported divots to all_divots.step")
-    # except Exception as e:
-    #     print(f"Failed to export divots: {e}")
+    try:
+        cq.exporters.export(divots, "all_divots.step")
+        print("Exported divots to all_divots.step")
+    except Exception as e:
+        print(f"Failed to export divots: {e}")
 
-    # # Subtract divots from model
+
+
+    # modified = model
+    # batch_size = 20
+    # for i in tqdm(range(0, len(all_divots), batch_size), desc="Cutting divot batches"):
+    #     batch = all_divots[i:i + batch_size]
+    #     if not batch:
+    #         continue
+    #     try:
+    #         combined_divots = batch[0]
+    #         for j in range(1, len(batch)):
+    #             combined_divots = combined_divots.union(batch[j])
+    #         modified = modified.cut(combined_divots)
+    #     except Exception as e:
+    #         print(f"Error cutting batch {i // batch_size + 1}: {e}")
+
+    # # Export result
     # try:
-    #     modified = model.cut(divots)
-    #     # Export result
-    #     cq.exporters.export(modified, "divotted_face_v1.step")
+    #     cq.exporters.export(modified, "divotted_face_v3.step")
+    #     print("Successfully created and exported divotted model!")
     # except Exception as e:
     #     print(f"Failed to create final model: {e}")
-    # print("Successfully created and exported divotted model!")
+
