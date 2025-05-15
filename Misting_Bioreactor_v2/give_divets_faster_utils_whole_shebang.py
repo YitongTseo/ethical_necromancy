@@ -144,37 +144,7 @@ if __name__ == "__main__":
 
     print(f"Mesh has {len(mesh.vertices)} vertices and {len(mesh.faces)} faces")
 
-    # # Test a ray cast to verify the mesh works
-    # test_x, test_y = (xmin + xmax) / 2, (ymin + ymax) / 2
-    # test_ray_origin = np.array([[test_x, test_y, 100]])
-    # test_ray_direction = np.array([[0, 0, -1]])
-
-    # test_locations, _, _ = mesh.ray.intersects_location(test_ray_origin, test_ray_direction)
-    # if len(test_locations) > 0:
-    #     print(f"Test ray cast successful at ({test_x:.2f}, {test_y:.2f}). Z-top: {test_locations[0][2]:.2f}")
-    # else:
-    #     print(f"Warning: Test ray cast failed at ({test_x:.2f}, {test_y:.2f}). Check your mesh.")
-
     mesh_bytes = pickle.dumps(mesh)
-
-    # Use fewer divots initially to test the process
-    # step_size = int(SPACING)
-
-    # Let's first visualize where the model actually is
-    # test_points = []
-    # for x in np.linspace(precise_xmin, precise_xmax, num=10):
-    #     for y in np.linspace(precise_ymin, precise_ymax, num=10):
-    #         ray_origin = np.array([[x, y, 100]])
-    #         ray_direction = np.array([[0, 0, -1]])
-    #         locations, _, _ = mesh.ray.intersects_location(ray_origin, ray_direction)
-    #         if len(locations) > 0:
-    #             test_points.append((x, y, locations[0][2]))
-
-    # print(f"Found {len(test_points)} test points with intersections")
-    # if test_points:
-    #     print("Sample successful intersections:")
-    #     for i, (x, y, z) in enumerate(test_points[:5]):
-    #         print(f"  Point {i+1}: ({x:.2f}, {y:.2f}, {z:.2f})")
 
     all_divots = []
     for x_idx, x in tqdm(enumerate(range(int(xmin), int(xmax) + 2, int(SPACING))), total=int((xmax-xmin) / SPACING)):
@@ -194,48 +164,51 @@ if __name__ == "__main__":
 
     # Unite divots in batches to avoid geometry errors
     batch_size = 10
-    for i in range(1, len(all_divots), batch_size):
-        batch = all_divots[i:i+batch_size]
-        try:
-            # Combine divots in this batch
-            batch_union = batch[0]
-            for divot in batch[1:]:
-                batch_union = batch_union.union(divot)
+    modified_model = model
 
-            # Add this batch to the main divots
-            divots = divots.union(batch_union)
-            print(f"Processed batch {i//batch_size + 1}/{(len(all_divots)-1)//batch_size + 1}")
-        except Exception as e:
-            print(f"Error in batch {i//batch_size + 1}: {e}")
+    for i in tqdm(range(0, len(all_divots), batch_size), desc="Cutting divot batches"):
+        batch = all_divots[i:i + batch_size]
+        if not batch:
             continue
+        try:
+            combined_divots = batch[0]
+            for j in range(1, len(batch)):
+                combined_divots = combined_divots.union(batch[j])
+            modified_model = modified_model.cut(combined_divots)
+        except Exception as e:
+            print(f"Error cutting batch {i // batch_size + 1}: {e}")
 
-    # # Save the divots for inspection
+    # Export the final modified model
     try:
-        cq.exporters.export(divots, "all_divots.step")
-        print("Exported divots to all_divots.step")
+        cq.exporters.export(modified_model, "divotted_face_v4.step")
+        print("Successfully created and exported the divotted model!")
     except Exception as e:
-        print(f"Failed to export divots: {e}")
+        print(f"Failed to export the final model: {e}")
 
-
-
-    # modified = model
-    # batch_size = 20
-    # for i in tqdm(range(0, len(all_divots), batch_size), desc="Cutting divot batches"):
-    #     batch = all_divots[i:i + batch_size]
-    #     if not batch:
-    #         continue
+    # for i in range(1, len(all_divots), batch_size):
+    #     batch = all_divots[i:i+batch_size]
     #     try:
-    #         combined_divots = batch[0]
-    #         for j in range(1, len(batch)):
-    #             combined_divots = combined_divots.union(batch[j])
-    #         modified = modified.cut(combined_divots)
+    #         # Combine divots in this batch
+    #         batch_union = batch[0]
+    #         for divot in batch[1:]:
+    #             batch_union = batch_union.union(divot)
+
+    #         # Add this batch to the main divots
+    #         divots = divots.union(batch_union)
+    #         print(f"Processed batch {i//batch_size + 1}/{(len(all_divots)-1)//batch_size + 1}")
     #     except Exception as e:
-    #         print(f"Error cutting batch {i // batch_size + 1}: {e}")
+    #         print(f"Error in batch {i//batch_size + 1}: {e}")
+    #         continue
+
+    # # # Save the divots for inspection
+    # try:
+    #     cq.exporters.export(divots, "all_divots.step")
+    #     print("Exported divots to all_divots.step")
+    # except Exception as e:
+    #     print(f"Failed to export divots: {e}")
+    
+    # # Subtract divots from original model
+    # modified = model.cut(divots)
 
     # # Export result
-    # try:
-    #     cq.exporters.export(modified, "divotted_face_v3.step")
-    #     print("Successfully created and exported divotted model!")
-    # except Exception as e:
-    #     print(f"Failed to create final model: {e}")
-
+    # cq.exporters.export(modified, "divotted_face_v2.step")
