@@ -5,13 +5,14 @@ import pickle
 import os
 from tqdm import tqdm
 import random
+from cadquery import Vector
 
 # Note: Make sure the 'rtree' package is installed for trimesh's ray casting to work:
 # pip install rtree
 
 # Parameters
 COEFFICIENT = 1.0
-SPACING = 3 * 4 * COEFFICIENT
+SPACING = 2.5 * 4 * COEFFICIENT
 cone_radius = 4 * COEFFICIENT
 cone_depth = 4.0 * COEFFICIENT
 
@@ -21,37 +22,53 @@ connecting_cylinder_depth = cone_depth
 sphere_radius = 1.5 * COEFFICIENT
 sphere_depth = connecting_cylinder_depth * 1.5
 
-def build_divot_geometry():
+# ALERT: BE VERY CAREFUL NOT TO PUT ANYTHING BELOW THE SURFACE 
+# OTHERWISE IT WILL FAIL!!!
+def build_geometry_individually_packaged(x, y, z, ZMIN):
+    if z + RAISED_DEPTH - cone_depth <= ZMIN:
+        return []
+    if z + RAISED_DEPTH - 2 * connecting_cylinder_depth  <= ZMIN:
+        return []
+    if  z + RAISED_DEPTH - sphere_depth - sphere_radius <= ZMIN:
+        return []
+
     cone = (
         cq.Workplane("XY")
         .circle(cone_radius)
         .workplane(offset=-cone_depth)
-        .circle(0.0001)
+        .circle(0.01)
         .loft()
-        .translate((0, 0, RAISED_DEPTH))
-    )
+        .translate((x, y, z + RAISED_DEPTH))
+        )
+
+    # this top sphere replaces the original clone
+    # top_sphere = (
+    #     cq.Workplane("XY")
+    #     .sphere(cone_depth)
+    #     .translate((x, y, z + RAISED_DEPTH))
+    # )
 
     top_cylinder = (
         cq.Workplane("XY")
         .cylinder(cone_depth * 4, cone_radius)
-        .translate((0, 0, cone_depth * 2 + RAISED_DEPTH))
+        .translate((x, y, z + cone_depth * 2 + RAISED_DEPTH))
     )
 
     connecting_cylinder = (
         cq.Workplane("XY")
         .cylinder(connecting_cylinder_depth, connecting_cylinder_radius)
-        .translate((0, 0, RAISED_DEPTH - connecting_cylinder_depth))
+        .translate((x, y, z + RAISED_DEPTH - connecting_cylinder_depth + 0.1))
     )
 
     sphere = (
         cq.Workplane("XY")
         .sphere(sphere_radius)
-        .translate((0, 0, RAISED_DEPTH - sphere_depth))
+        .translate((x, y, z + RAISED_DEPTH - sphere_depth))
     )
 
-    return cone.union(top_cylinder).union(connecting_cylinder).union(sphere)
+    return [cone, top_cylinder, connecting_cylinder, sphere]
 
-def create_translated_divot(x, y, mesh, num_rays=1, dither_amount=0.00, min_z_threshold=0.1):
+def create_translated_divot(x, y, mesh, ZMIN, num_rays=1, dither_amount=0.00):
     ray_origins = np.array([[x, y, 100]])
     ray_directions = np.array([[0, 0, -1]])
     
@@ -94,35 +111,32 @@ def create_translated_divot(x, y, mesh, num_rays=1, dither_amount=0.00, min_z_th
     highest_z = -float('inf')
     valid_intersections = False
     for loc in locations:
-        if loc[2] > min_z_threshold:  # Only consider intersections above a certain Z
+        if loc[2] > ZMIN:  # Only consider intersections above a certain Z
             highest_z = max(highest_z, loc[2])
             valid_intersections = True
 
     if not valid_intersections:
         return None
 
-    divot = build_divot_geometry()
-    return divot.translate((x, y, highest_z))
-    # except Exception as e:
-    #     print(f"Failed divot at ({x:.2f}, {y:.2f}): {e}")
-    #     return None
+    return build_geometry_individually_packaged(x, y, highest_z, ZMIN)
+
 
 if __name__ == "__main__":
     # Load your sloped STEP file
-    model = cq.importers.importStep("face v1.step")
+    model = cq.importers.importStep("bigger_baserline v1.step")
 
     # Get bounding box
     bbox = model.val().BoundingBox()
     xmin, xmax = bbox.xmin, bbox.xmax
     ymin, ymax = bbox.ymin, bbox.ymax
-    zmin = bbox.zmin
+    ZMIN = bbox.zmin
 
-    print(f"Model bounds: X({xmin:.2f}, {xmax:.2f}), Y({ymin:.2f}, {ymax:.2f})")
+    print(f"Model bounds: X({xmin:.2f}, {xmax:.2f}), Y({ymin:.2f}, {ymax:.2f}), zmin {ZMIN}")
 
     # Convert CQ model to mesh for raycasting
-    if os.path.exists('face_mesh.glb'):
+    if os.path.exists('bigger_baserline v1.glb'):
         print('Loading existing mesh...')
-        mesh = trimesh.load("face_mesh.glb")
+        mesh = trimesh.load("bigger_baserline v1.glb")
 
         # Fix: Ensure we have a Trimesh, not a Scene
         if isinstance(mesh, trimesh.Scene):
@@ -136,11 +150,11 @@ if __name__ == "__main__":
                 exit(1)
     else:
         print('Computing new mesh...')
-        vertices, faces = model.val().tessellate(0.1)  # Using finer tessellation
+        vertices, faces = model.val().tessellate(2)  # Using finer tessellation
         vertices_np = np.array([[v.x, v.y, v.z] for v in vertices])
         faces_np = np.array(faces)
-        mesh = trimesh.Trimesh(vertices=vertices_np, faces=faces_np)
-        mesh.export("face_mesh.glb")
+        mesh = trimesh.Trimesh(vertices=vertices_np, faces=faces_np,)
+        mesh.export("bigger_baserline v1.glb")
 
     print(f"Mesh has {len(mesh.vertices)} vertices and {len(mesh.faces)} faces")
 
@@ -149,7 +163,7 @@ if __name__ == "__main__":
     all_divots = []
     for x_idx, x in tqdm(enumerate(range(int(xmin), int(xmax) + 2, int(SPACING))), total=int((xmax-xmin) / SPACING)):
         for y in range(int(ymin), int(ymax) + 2, int(SPACING)):
-            divot = create_translated_divot(float(x), float(y), mesh)
+            divot = create_translated_divot(float(x), float(y), mesh, ZMIN=ZMIN)
             if divot is not None:
                 all_divots.append(divot)
 
@@ -159,56 +173,30 @@ if __name__ == "__main__":
         print("No divots were created. Exiting.")
         exit(1)
 
-    # Create a single divot as a base and union the rest
-    divots = all_divots[0]
-
     # Unite divots in batches to avoid geometry errors
-    batch_size = 10
+    batch_size = 100
     modified_model = model
+    num_elements_in_tuple = len(all_divots[0]) if all_divots else 1  # Assuming all tuples have the same length
 
     for i in tqdm(range(0, len(all_divots), batch_size), desc="Cutting divot batches"):
         batch = all_divots[i:i + batch_size]
         if not batch:
             continue
-        try:
-            combined_divots = batch[0]
-            for j in range(1, len(batch)):
-                combined_divots = combined_divots.union(batch[j])
-            modified_model = modified_model.cut(combined_divots)
-        except Exception as e:
-            print(f"Error cutting batch {i // batch_size + 1}: {e}")
+
+        for element_index in range(num_elements_in_tuple):
+            print(f'element {element_index}')
+            current_element_batch = [divot_tuple[element_index] for divot_tuple in batch if len(divot_tuple) == num_elements_in_tuple]
+            try:
+                combined_divots = current_element_batch[0]
+                for j in range(1, len(current_element_batch)):
+                    combined_divots = combined_divots.union(current_element_batch[j])
+                modified_model = modified_model.cut(combined_divots)
+            except Exception as e:
+                print(f"Error cutting batch {i // batch_size + 1}: {e}")
 
     # Export the final modified model
     try:
-        cq.exporters.export(modified_model, "divotted_face_v4.step")
+        cq.exporters.export(modified_model, "bigger_baseline_divotted_v3.step")
         print("Successfully created and exported the divotted model!")
     except Exception as e:
         print(f"Failed to export the final model: {e}")
-
-    # for i in range(1, len(all_divots), batch_size):
-    #     batch = all_divots[i:i+batch_size]
-    #     try:
-    #         # Combine divots in this batch
-    #         batch_union = batch[0]
-    #         for divot in batch[1:]:
-    #             batch_union = batch_union.union(divot)
-
-    #         # Add this batch to the main divots
-    #         divots = divots.union(batch_union)
-    #         print(f"Processed batch {i//batch_size + 1}/{(len(all_divots)-1)//batch_size + 1}")
-    #     except Exception as e:
-    #         print(f"Error in batch {i//batch_size + 1}: {e}")
-    #         continue
-
-    # # # Save the divots for inspection
-    # try:
-    #     cq.exporters.export(divots, "all_divots.step")
-    #     print("Exported divots to all_divots.step")
-    # except Exception as e:
-    #     print(f"Failed to export divots: {e}")
-    
-    # # Subtract divots from original model
-    # modified = model.cut(divots)
-
-    # # Export result
-    # cq.exporters.export(modified, "divotted_face_v2.step")
