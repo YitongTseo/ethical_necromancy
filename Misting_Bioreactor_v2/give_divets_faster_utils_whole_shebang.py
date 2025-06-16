@@ -12,7 +12,7 @@ from cadquery import Vector
 
 # Parameters
 COEFFICIENT = 1.0
-SPACING = 2.8 * 4 * COEFFICIENT
+SPACING = 3 * 4 * COEFFICIENT
 cone_radius = 4 * COEFFICIENT
 cone_depth = 4.0 * COEFFICIENT
 
@@ -123,7 +123,7 @@ def create_translated_divot(x, y, mesh, ZMIN, num_rays=1, dither_amount=0.00):
 
 if __name__ == "__main__":
     # Load your sloped STEP file
-    model = cq.importers.importStep("bigger_baseline v2.step")
+    model = cq.importers.importStep("bigger_baserline v1.step")
 
     # Get bounding box
     bbox = model.val().BoundingBox()
@@ -134,9 +134,9 @@ if __name__ == "__main__":
     print(f"Model bounds: X({xmin:.2f}, {xmax:.2f}), Y({ymin:.2f}, {ymax:.2f}), zmin {ZMIN}")
 
     # Convert CQ model to mesh for raycasting
-    if os.path.exists('bigger_baseline v2.glb'):
+    if os.path.exists('bigger_baserline v1.glb'):
         print('Loading existing mesh...')
-        mesh = trimesh.load("bigger_baseline v2.glb")
+        mesh = trimesh.load("bigger_baserline v1.glb")
 
         # Fix: Ensure we have a Trimesh, not a Scene
         if isinstance(mesh, trimesh.Scene):
@@ -154,7 +154,7 @@ if __name__ == "__main__":
         vertices_np = np.array([[v.x, v.y, v.z] for v in vertices])
         faces_np = np.array(faces)
         mesh = trimesh.Trimesh(vertices=vertices_np, faces=faces_np,)
-        mesh.export("bigger_baseline v2.glb")
+        mesh.export("bigger_baserline v1.glb")
 
     print(f"Mesh has {len(mesh.vertices)} vertices and {len(mesh.faces)} faces")
 
@@ -208,7 +208,7 @@ if __name__ == "__main__":
 
     # Export the final modified model
     try:
-        cq.exporters.export(modified_model, "bigger_baseline_divotted_v5.step")
+        cq.exporters.export(modified_model, "bigger_baseline_divotted_v6.step")
         print("Successfully created and exported the divotted model!")
     except Exception as e:
         print(f"Failed to export the final model: {e}")
